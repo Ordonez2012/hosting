@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego Simple</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="1370" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const ball = {
+            x: 50,
+            y: 50,
+            radius: 30, // Ajusté el radio
+            color: 'red',
+            speed: 5,
+            velocityX: 0,
+            velocityY: 0,
+        };
+
+        const handleKeyPress = (event) => {
+            switch (event.key) {
+                case 'w':
+                    ball.velocityY = -ball.speed;
+                    break;
+                case 's':
+                    ball.velocityY = ball.speed;
+                    break;
+                case 'a':
+                    ball.velocityX = -ball.speed;
+                    break;
+                case 'd':
+                    ball.velocityX = ball.speed;
+                    break;
+            }
+        };
+
+        const handleKeyRelease = (event) => {
+            switch (event.key) {
+                case 'w':
+                case 's':
+                    ball.velocityY = 0;
+                    break;
+                case 'a':
+                case 'd':
+                    ball.velocityX = 0;
+                    break;
+            }
+        };
+
+        const update = () => {
+            ball.x += ball.velocityX;
+            ball.y += ball.velocityY;
+
+            // Evitar que la pelota salga del canvas
+            if (ball.x - ball.radius < 0) {
+                ball.x = ball.radius;
+            }
+            if (ball.x + ball.radius > canvas.width) {
+                ball.x = canvas.width - ball.radius;
+            }
+            if (ball.y - ball.radius < 0) {
+                ball.y = ball.radius;
+            }
+            if (ball.y + ball.radius > canvas.height) {
+                ball.y = canvas.height - ball.radius;
+            }
+        };
+
+        const draw = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Dibuja la pelota
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = ball.color;
+            ctx.fill();
+            ctx.closePath();
+        };
+
+        const gameLoop = () => {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+        window.addEventListener('keyup', handleKeyRelease);
+
+        gameLoop();
+    </script>
+</body>
+</html>
